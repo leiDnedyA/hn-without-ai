@@ -60,7 +60,7 @@ a:hover {
   width: 18px;
   height: 18px;
   border: 1px solid #ffffff;
-  background-color: #ff6600;
+  background-color: #00cc88;
   color: #ffffff;
   font-family: Verdana, Geneva, sans-serif;
   font-size: 13px;
@@ -164,7 +164,7 @@ a:hover {
 
 .footdivider {
   height: 2px;
-  background-color: #ff6600;
+  background-color: #00cc88;
   border: none;
   margin: 12px 0 8px 0;
 }

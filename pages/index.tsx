@@ -121,7 +121,7 @@ export default function Home({
         >
           <tbody>
             <tr>
-              <td style={{ backgroundColor: "#ff6600" }}>
+              <td style={{ backgroundColor: "#00cc88" }}>
                 <table
                   border={0}
                   cellPadding={0}
@@ -140,7 +140,7 @@ export default function Home({
                       <td style={{ lineHeight: "12pt", height: 10 }}>
                         <span className="pagetop">
                           <b className="hnname">
-                            <Link href="/">Hacker News</Link>
+                            <Link href="/">HN without AI</Link>
                           </b>
 
                           <a href={`${HN}/newest`} rel="noreferrer">
@@ -185,15 +185,6 @@ export default function Home({
                         </span>
                       </td>
 
-                      <td style={{ textAlign: "right", paddingRight: 4 }}>
-                        <span className="pagetop">
-                          {removed} AI submission
-                          {removed === 1 ? "" : "s"} removed
-                          {withheld > 0
-                            ? ` · ${withheld} unverified withheld`
-                            : ""}
-                        </span>
-                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -221,20 +212,17 @@ export default function Home({
 
                 <div className="yclinks">
                   <p>
+                    <a href="https://github.com/leiDnedyA/hn-without-ai">Contribute</a>
+                    {" "}&middot;{" "}
                     {stories.length} of {stories.length + removed + withheld}{" "}
-                    front-page submissions survived the filter &middot; updated{
+                    submissions survived the filter &middot; updated{
                       " "
                     }
-                    {updated} &middot; classified by {model}
+                    {updated}
+                   
                   </p>
 
-                  <p>
-                    Content scraped from{" "}
-                    <a href={HN} rel="noreferrer">
-                      news.ycombinator.com
-                    </a>
-                    . Not affiliated with Y Combinator.
-                  </p>
+                  <p></p>
                 </div>
               </td>
             </tr>
