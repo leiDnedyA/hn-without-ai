@@ -9,6 +9,21 @@ const MODEL = process.env.CLASSIFIER_MODEL ?? "gpt-5.6-luna";
 
 const JINA_API_KEY = process.env.JINA_API_KEY;
 
+const configuredRequestsPerMinute = Number(
+  process.env.CLASSIFIER_REQUESTS_PER_MINUTE
+);
+const OPENAI_REQUESTS_PER_MINUTE =
+  Number.isInteger(configuredRequestsPerMinute) &&
+  configuredRequestsPerMinute > 0
+    ? configuredRequestsPerMinute
+    : 60;
+const OPENAI_REQUEST_INTERVAL_MS = Math.ceil(
+  60_000 / OPENAI_REQUESTS_PER_MINUTE
+);
+
+let nextOpenAIRequestAt = 0;
+let openAIRequestSchedule: Promise<void> = Promise.resolve();
+
 /**
  * Large enough that three front pages (~90 submissions) go out as a single
  * request for the initial title pass.
@@ -63,12 +78,32 @@ const SCHEMA = {
 type Batch = { index: number; story: Story };
 type ContentItem = Batch & { markdown: string };
 
+/**
+ * Space request starts across every classifier invocation in this process. The
+ * schedule is kept separate from the request itself, so a rejected API call
+ * cannot stall requests queued behind it.
+ */
+async function waitForOpenAIRequestSlot(): Promise<void> {
+  const slot = openAIRequestSchedule.then(async () => {
+    const delay = Math.max(0, nextOpenAIRequestAt - Date.now());
+    if (delay > 0) {
+      await new Promise<void>((resolve) => setTimeout(resolve, delay));
+    }
+    nextOpenAIRequestAt = Date.now() + OPENAI_REQUEST_INTERVAL_MS;
+  });
+
+  openAIRequestSchedule = slot.catch(() => undefined);
+  await slot;
+}
+
 async function requestClassifications(
   client: OpenAI,
   batch: Batch[],
   instructions: string,
   input: string
 ): Promise<Map<string, boolean>> {
+  await waitForOpenAIRequestSlot();
+
   const response = await client.responses.create({
     model: MODEL,
     instructions,
