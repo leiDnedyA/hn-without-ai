@@ -4,6 +4,7 @@ import type { GetStaticProps, InferGetStaticPropsType } from "next";
 import { getFeed, type ClassifiedStory } from "@/lib/feed";
 
 const HN = "https://news.ycombinator.com";
+const HN_WITHOUT_AI = "https://hn-without-ai.vercel.app"
 
 type Props = {
   stories: ClassifiedStory[];
@@ -131,7 +132,7 @@ export default function Home({
                   <tbody>
                     <tr>
                       <td style={{ width: 18, paddingRight: 4 }}>
-                        <a href={HN} className="logo" rel="noreferrer">
+                        <a href={HN_WITHOUT_AI} className="logo" rel="noreferrer">
                           Y
                         </a>
                       </td>
