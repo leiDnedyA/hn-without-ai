@@ -1,40 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# noai-hn
 
-## Getting Started
+Hacker News with AI-driven content removed.
 
-First, run the development server:
+Server-side rendered. The app scrapes the first three front pages of Hacker News,
+asks an efficient OpenAI model to classify each submission as AI-driven or not, drops the
+AI ones, and renders the rest in Hacker News' own markup and stylesheet.
+
+The whole feed is rebuilt at most once every 30 minutes, and all ~90 submissions are
+classified in a single request — so the app makes at most one LLM call per half hour.
+
+## Running it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+echo 'OPENAI_API_KEY=your-api-key' > .env.local
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Without `OPENAI_API_KEY` the app still runs — it serves the unfiltered front
+pages with a notice explaining that classification is unavailable.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+| Env var            | Default          | Purpose                     |
+| ------------------ | ---------------- | --------------------------- |
+| `OPENAI_API_KEY`   | —                | Required for classification |
+| `CLASSIFIER_MODEL` | `gpt-5.6-luna`   | Model used for classification |
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## How it works
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+| File              | Role                                                                     |
+| ----------------- | ------------------------------------------------------------------------ |
+| `lib/hn.ts`       | Fetches and parses `news.ycombinator.com/news?p=1..3`                     |
+| `lib/classify.ts` | Sends all titles to OpenAI's Responses API with a JSON schema, returns a verdict per story |
+| `lib/feed.ts`     | 30-minute feed cache, plus per-story verdicts for the life of the process |
+| `pages/index.tsx` | `getStaticProps` + ISR + Hacker News markup                                |
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Verdicts are also cached by HN item id, so a story that lingers on the front page is
+only ever sent to the model once — a refresh where nothing is new costs zero calls.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+A classification failure never hides a post: unclassified submissions are treated as
+non-AI and the page says so. Such a window is still spent, so an unfiltered feed can
+persist until the next one — the rate cap wins over freshness.
