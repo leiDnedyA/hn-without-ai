@@ -37,7 +37,7 @@ function remember(id: string, ai: boolean) {
 }
 
 async function build(): Promise<Feed> {
-  const stories = await fetchFrontPages(3);
+  const stories = await fetchFrontPages(6);
   const unseen = stories.filter((story) => !verdicts.has(story.id));
 
   let warning: string | null = null;

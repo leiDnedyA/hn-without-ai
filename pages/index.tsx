@@ -102,7 +102,7 @@ export default function Home({
   return (
     <>
       <Head>
-        <title>Hacker News</title>
+        <title>Hacker News w/ AI Filter</title>
         <meta
           name="description"
           content="Hacker News with AI-driven content removed."
