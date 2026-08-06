@@ -8,6 +8,7 @@ const HN = "https://news.ycombinator.com";
 type Props = {
   stories: ClassifiedStory[];
   removed: number;
+  withheld: number;
   model: string;
   updated: string;
   warning: string | null;
@@ -93,6 +94,7 @@ function Row({ story, rank }: { story: ClassifiedStory; rank: number }) {
 export default function Home({
   stories,
   removed,
+  withheld,
   model,
   updated,
   warning,
@@ -186,6 +188,9 @@ export default function Home({
                         <span className="pagetop">
                           {removed} AI submission
                           {removed === 1 ? "" : "s"} removed
+                          {withheld > 0
+                            ? ` · ${withheld} unverified withheld`
+                            : ""}
                         </span>
                       </td>
                     </tr>
@@ -198,8 +203,6 @@ export default function Home({
 
             <tr>
               <td>
-                {warning ? <div className="notice">{warning}</div> : null}
-
                 <table
                   border={0}
                   cellPadding={0}
@@ -217,9 +220,11 @@ export default function Home({
 
                 <div className="yclinks">
                   <p>
-                    {stories.length} of {stories.length + removed} front-page
-                    submissions survived the filter &middot; updated {updated}{" "}
-                    &middot; classified by {model}
+                    {stories.length} of {stories.length + removed + withheld}{" "}
+                    front-page submissions survived the filter &middot; updated{
+                      " "
+                    }
+                    {updated} &middot; classified by {model}
                   </p>
 
                   <p>
@@ -241,12 +246,13 @@ export default function Home({
 
 export const getStaticProps = (async () => {
   const feed = await getFeed();
-  const stories = feed.stories.filter((story) => !story.ai);
+  const stories = feed.stories.filter((story) => story.ai === false);
 
   return {
     props: {
       stories,
-      removed: feed.stories.length - stories.length,
+      removed: feed.stories.filter((story) => story.ai === true).length,
+      withheld: feed.stories.filter((story) => story.ai === null).length,
       model: process.env.CLASSIFIER_MODEL ?? "gpt-5.6-luna",
       updated: `${new Date(feed.fetchedAt)
         .toISOString()

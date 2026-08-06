@@ -1,7 +1,7 @@
 import { classifyStories } from "./classify";
 import { fetchFrontPages, type Story } from "./hn";
 
-export type ClassifiedStory = Story & { ai: boolean };
+export type ClassifiedStory = Story & { ai: boolean | null };
 
 export type Feed = {
   stories: ClassifiedStory[];
@@ -11,8 +11,8 @@ export type Feed = {
 };
 
 /**
- * The whole feed — scrape and classification alike — is rebuilt at most this
- * often, which caps the app at one LLM call per window.
+ * The whole feed — scrape and both classification stages alike — is rebuilt at
+ * most this often.
  */
 const TTL_MS = 30 * 60 * 1000;
 const VERDICT_CACHE_LIMIT = 5000;
@@ -47,17 +47,17 @@ async function build(): Promise<Feed> {
       for (const [id, ai] of fresh) remember(id, ai);
       const missed = unseen.filter((story) => !verdicts.has(story.id));
       if (missed.length > 0) {
-        warning = `${missed.length} of ${stories.length} submissions could not be classified and are shown as-is.`;
+        warning = `${missed.length} of ${stories.length} submissions could not be fully classified and were withheld.`;
       }
     } catch (error) {
       console.error("[feed] classification unavailable:", error);
       warning =
-        "Classification is unavailable right now — showing the unfiltered front pages.";
+        "Classification is unavailable right now — unverified submissions were withheld.";
     }
   }
 
   return {
-    stories: stories.map((story) => ({ ...story, ai: verdicts.get(story.id) ?? false })),
+    stories: stories.map((story) => ({ ...story, ai: verdicts.get(story.id) ?? null })),
     fetchedAt: Date.now(),
     warning,
   };
@@ -66,7 +66,7 @@ async function build(): Promise<Feed> {
 /**
  * Cached feed. Concurrent callers share one refresh, and a window that ends in
  * a classification failure is still spent — the cap is honoured over freshness,
- * so an unfiltered feed persists until the next window.
+ * so unverified stories remain withheld until the next window.
  */
 export async function getFeed(): Promise<Feed> {
   if (snapshot && Date.now() - snapshot.fetchedAt < TTL_MS) return snapshot;
