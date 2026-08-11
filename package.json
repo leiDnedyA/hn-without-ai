@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@mozilla/readability": "^0.6.0",
+    "linkedom": "^0.18.13",
     "next": "16.3.0",
     "node-html-markdown": "^2.0.0",
     "openai": "^7.4.0",

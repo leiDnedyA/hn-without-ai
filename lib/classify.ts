@@ -1,5 +1,7 @@
 import OpenAI from "openai";
 import { NodeHtmlMarkdown } from "node-html-markdown";
+import { Readability } from "@mozilla/readability";
+import { parseHTML } from "linkedom";
 import type { Story } from "./hn";
 
 /**
@@ -168,6 +170,26 @@ async function classifyTitleBatch(
   );
 }
 
+/**
+ * Reduce a page to its article before converting. Nav, sidebars, and footers
+ * are pure cost for a subject-matter judgement, and on a long page they can
+ * crowd the actual prose out of the MAX_MARKDOWN_CHARS window. Readability
+ * gives up on pages that are not articles at all, in which case the whole
+ * document is converted as before.
+ */
+function extractMarkdown(html: string, url: string): string {
+  let content: string | null = null;
+
+  try {
+    const { document } = parseHTML(html);
+    content = new Readability(document).parse()?.content ?? null;
+  } catch (error) {
+    console.error(`[classify] readability failed for ${url}:`, error);
+  }
+
+  return htmlToMarkdown.translate(content ?? html).trim();
+}
+
 async function fetchMarkdown(story: Story): Promise<string> {
   const response = await fetch(story.url, {
     headers: {
@@ -189,7 +211,7 @@ async function fetchMarkdown(story: Story): Promise<string> {
 
   // Guard against multi-megabyte pages before handing anything to the parser.
   const html = (await response.text()).slice(0, MAX_HTML_BYTES);
-  const markdown = htmlToMarkdown.translate(html).trim();
+  const markdown = extractMarkdown(html, story.url);
 
   if (!markdown) {
     throw new Error(`${story.url} produced no readable content`);
