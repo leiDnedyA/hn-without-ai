@@ -52,7 +52,7 @@ AI is a substantial topic even if its title obscures that fact.`;
 const FETCH_CONCURRENCY = 30;
 const USER_AGENT = "noai-hn (+https://github.com/)";
 const MAX_HTML_BYTES = 5_000_000;
-const MAX_MARKDOWN_CHARS = 100_000;
+const MAX_MARKDOWN_CHARS = 5_000;
 const CONTENT_BATCH_CHARS = 200_000;
 
 const htmlToMarkdown = new NodeHtmlMarkdown();
