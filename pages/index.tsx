@@ -133,7 +133,7 @@ export default function Home({
                     <tr>
                       <td style={{ width: 18, paddingRight: 4 }}>
                         <a href={UNSLOP_NEWS} className="logo" rel="noreferrer">
-                          Y
+                          U
                         </a>
                       </td>
 
@@ -215,10 +215,7 @@ export default function Home({
                     <a href="https://github.com/leiDnedyA/hn-without-ai">Contribute</a>
                     {" "}&middot;{" "}
                     {stories.length} of {stories.length + removed + withheld}{" "}
-                    submissions survived the filter &middot; updated{
-                      " "
-                    }
-                    {updated}
+                    submissions survived the filter &middot; made with {"&lt;3"} by <a href="https://aydendiel.dev/">Ayden Diel</a>
                    
                   </p>
 
