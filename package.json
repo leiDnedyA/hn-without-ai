@@ -11,6 +11,7 @@
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
     "@upstash/redis": "^1.38.2",
+    "@vercel/analytics": "^2.0.1",
     "linkedom": "^0.18.13",
     "next": "16.3.0",
     "node-html-markdown": "^2.0.0",
