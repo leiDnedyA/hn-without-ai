@@ -7,6 +7,7 @@ body {
 }
 
 body {
+  margin: 8px;
   font-family: Verdana, Geneva, sans-serif;
   font-size: 10pt;
   color: #828282;
@@ -36,6 +37,16 @@ a:hover {
 #hnmain {
   background-color: #f6f6ef;
   margin: 0 auto;
+}
+
+@media only screen and (max-width: 750px) {
+  body {
+    margin: 0;
+  }
+
+  #hnmain {
+    width: 100%;
+  }
 }
 
 /* ---------- header ---------- */
