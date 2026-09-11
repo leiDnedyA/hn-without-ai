@@ -1,3 +1,5 @@
+import { USER_AGENT } from "./constants";
+
 export type Story = {
   id: string;
   rank: number;
@@ -54,7 +56,7 @@ async function fetchPage(page: number): Promise<string> {
   await waitForHNRequestSlot();
 
   const response = await fetch(`${BASE}/news?p=${page}`, {
-    headers: { "user-agent": "noai-hn (+https://github.com/)" },
+    headers: { "user-agent": USER_AGENT },
   });
   if (!response.ok) {
     throw new Error(`HN page ${page} returned ${response.status}`);
