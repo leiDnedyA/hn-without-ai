@@ -108,6 +108,12 @@ export default function Home({
           name="description"
           content="Hacker News with AI content removed."
         />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="unslop.news RSS"
+          href="/rss.xml"
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -213,6 +219,8 @@ export default function Home({
                 <div className="yclinks">
                   <p>
                     <a href="https://github.com/leiDnedyA/hn-without-ai">Contribute</a>
+                    {" "}&middot;{" "}
+                    <Link href="/rss.xml">RSS</Link>
                     {" "}&middot;{" "}
                     {stories.length} of {stories.length + removed + withheld}{" "}
                     submissions survived the filter &middot; made with {"&lt;3"} by <a href="https://aydendiel.dev/">Ayden Diel</a>
