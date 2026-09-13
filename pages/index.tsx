@@ -237,7 +237,7 @@ export default function Home({
                     <Link href="/rss.xml">RSS</Link>
                     {" "}&middot;{" "}
                     {stories.length} of {stories.length + removed + withheld}{" "}
-                    submissions survived the filter &middot; made with {"&lt;3"} by <a href="https://aydendiel.dev/">Ayden Diel</a>
+                    submissions survived the filter &middot; <a href="https://news.ycombinator.com/item?id=49660783#49663549">made with {"&lt;3"}</a> by <a href="https://aydendiel.dev/">Ayden Diel</a>
                    
                   </p>
 
