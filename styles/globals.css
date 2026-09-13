@@ -200,36 +200,21 @@ a:hover {
     width: 100%;
   }
 
-  .pagetop {
-    display: block;
-    line-height: 1.5;
-  }
-
   .hnname {
     display: block;
     margin-right: 0;
   }
 
-  .itemlist {
-    padding: 0 4px;
-  }
-
   .title {
     font-size: 11pt;
-    line-height: 1.35;
+    line-height: 14pt;
   }
 
   .subtext {
     font-size: 9pt;
-    line-height: 1.5;
   }
 
-  .votearrow {
-    margin-top: 5px;
-  }
-
-  .yclinks {
-    padding: 0 8px;
-    line-height: 1.5;
+  .sitebit {
+    display: block;
   }
 }

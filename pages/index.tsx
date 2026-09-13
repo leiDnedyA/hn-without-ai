@@ -198,6 +198,14 @@ export default function Home({
                         </span>
                       </td>
 
+                      <td style={{ textAlign: "right", paddingRight: 4 }}>
+                        <span className="pagetop">
+                          <a href={`${HN}/login`} rel="noreferrer">
+                            login
+                          </a>
+                        </span>
+                      </td>
+
                     </tr>
                   </tbody>
                 </table>
