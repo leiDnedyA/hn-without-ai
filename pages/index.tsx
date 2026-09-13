@@ -19,11 +19,18 @@ function Row({ story, rank }: { story: ClassifiedStory; rank: number }) {
   return (
     <>
       <tr className="athing">
-        <td className="title">
+        <td className="title rankcell">
           <span className="rank">{rank}.</span>
         </td>
         <td className="votelinks">
-          <div className="votearrow" title="upvote" />
+          <a
+            className="clicky"
+            href={`${HN}/item?id=${story.id}`}
+            aria-label={`Open Hacker News thread for ${story.title}`}
+            rel="noreferrer"
+          >
+            <div className="votearrow" title="upvote" />
+          </a>
         </td>
         <td className="title">
           <span className="titleline">

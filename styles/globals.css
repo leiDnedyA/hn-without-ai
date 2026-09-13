@@ -6,6 +6,11 @@ body {
   padding: 0;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   margin: 8px;
   font-family: Verdana, Geneva, sans-serif;
@@ -37,16 +42,7 @@ a:hover {
 #hnmain {
   background-color: #f6f6ef;
   margin: 0 auto;
-}
-
-@media only screen and (max-width: 750px) {
-  body {
-    margin: 0;
-  }
-
-  #hnmain {
-    width: 100%;
-  }
+  table-layout: fixed;
 }
 
 /* ---------- header ---------- */
@@ -86,6 +82,21 @@ a:hover {
 }
 
 /* ---------- item list ---------- */
+
+.itemlist {
+  width: 100%;
+}
+
+.titleline,
+.subtext {
+  overflow-wrap: anywhere;
+}
+
+.rankcell {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
 
 .title {
   font-family: Verdana, Geneva, sans-serif;
@@ -127,12 +138,12 @@ a:hover {
 }
 
 .votearrow {
-  width: 0;
-  height: 0;
+  display: block;
+  width: 10px;
+  height: 7px;
   margin: 3px 2px 6px;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 7px solid #999999;
+  background-color: #999999;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
 }
 
 .subtext {
@@ -178,4 +189,47 @@ a:hover {
   background-color: #00cc88;
   border: none;
   margin: 12px 0 8px 0;
+}
+
+@media only screen and (max-width: 750px) {
+  body {
+    margin: 0;
+  }
+
+  #hnmain {
+    width: 100%;
+  }
+
+  .pagetop {
+    display: block;
+    line-height: 1.5;
+  }
+
+  .hnname {
+    display: block;
+    margin-right: 0;
+  }
+
+  .itemlist {
+    padding: 0 4px;
+  }
+
+  .title {
+    font-size: 11pt;
+    line-height: 1.35;
+  }
+
+  .subtext {
+    font-size: 9pt;
+    line-height: 1.5;
+  }
+
+  .votearrow {
+    margin-top: 5px;
+  }
+
+  .yclinks {
+    padding: 0 8px;
+    line-height: 1.5;
+  }
 }
