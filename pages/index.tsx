@@ -19,7 +19,7 @@ function Row({ story, rank }: { story: ClassifiedStory; rank: number }) {
   return (
     <>
       <tr className="athing">
-        <td className="title">
+        <td className="title rankcell">
           <span className="rank">{rank}.</span>
         </td>
         <td className="votelinks">
@@ -193,6 +193,14 @@ export default function Home({
 
                           <a href={`${HN}/submit`} rel="noreferrer">
                             submit
+                          </a>
+                        </span>
+                      </td>
+
+                      <td style={{ textAlign: "right", paddingRight: 4 }}>
+                        <span className="pagetop">
+                          <a href={`${HN}/login`} rel="noreferrer">
+                            login
                           </a>
                         </span>
                       </td>
