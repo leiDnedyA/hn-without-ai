@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "unslop.hn.username";
 const CHANGE_EVENT = "unslop:username-change";
@@ -48,6 +48,31 @@ const getServerSnapshot = () => null;
 
 export function useHNUsername() {
   const username = useSyncExternalStore(subscribe, getUsername, getServerSnapshot);
+  const [profile, setProfile] = useState<{ username: string; karma: number | null } | null>(null);
+
+  useEffect(() => {
+    if (!username) return;
+    const controller = new AbortController();
+
+    async function loadKarma(username: string) {
+      try {
+        const response = await fetch(
+          `https://hacker-news.firebaseio.com/v0/user/${encodeURIComponent(username)}/karma.json`,
+          { signal: controller.signal },
+        );
+        if (!response.ok) throw new Error("Could not load HN karma");
+        const karma: unknown = await response.json();
+        if (!controller.signal.aborted) {
+          setProfile({ username, karma: typeof karma === "number" ? karma : null });
+        }
+      } catch {
+        if (!controller.signal.aborted) setProfile({ username, karma: null });
+      }
+    }
+
+    void loadKarma(username);
+    return () => controller.abort();
+  }, [username]);
 
   function login() {
     const input = window.prompt("Enter your Hacker News username to show your threads:");
@@ -55,5 +80,6 @@ export function useHNUsername() {
     if (value) setUsername(value);
   }
 
-  return { username, login, logout: () => setUsername(null) };
+  const karma = profile?.username === username ? profile?.karma ?? null : null;
+  return { username, karma, login, logout: () => setUsername(null) };
 }

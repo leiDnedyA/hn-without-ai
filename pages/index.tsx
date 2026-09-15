@@ -107,7 +107,7 @@ export default function Home({
   updated,
   warning,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const { username, login, logout } = useHNUsername();
+  const { username, karma, login, logout } = useHNUsername();
 
   return (
     <>
@@ -211,6 +211,15 @@ export default function Home({
 
                       <td style={{ textAlign: "right", paddingRight: 4 }}>
                         <span className="pagetop">
+                          {username ? (
+                            <>
+                              <a href={`${HN}/user?id=${encodeURIComponent(username)}`} rel="noreferrer">
+                                {username}
+                              </a>
+                              {karma !== null ? ` (${karma})` : null}
+                              {" | "}
+                            </>
+                          ) : null}
                           <button
                             type="button"
                             className="navbutton"
