@@ -1,6 +1,7 @@
 import { classifyStories } from "./classify";
 import { fetchFrontPages, type Story } from "./hn";
 import { getVerdictStore, type Verdict } from "./verdicts";
+import { recordClassifiedStories } from "./stats";
 
 export type ClassifiedStory = Story & { ai: boolean | null };
 
@@ -94,7 +95,7 @@ async function build(): Promise<Feed> {
     warning = `${withheld.length} of ${stories.length} submissions could not be fully classified and were withheld.`;
   }
 
-  return {
+  const feed: Feed = {
     stories: stories.map((story) => ({
       ...story,
       ai: stored.get(story.id)?.ai ?? null,
@@ -102,6 +103,15 @@ async function build(): Promise<Feed> {
     fetchedAt: now,
     warning,
   };
+
+  try {
+    await recordClassifiedStories(feed.stories);
+  } catch (error) {
+    // Stats persistence must not take the feed down.
+    console.error("[feed] stats persistence failed:", error);
+  }
+
+  return feed;
 }
 
 /**

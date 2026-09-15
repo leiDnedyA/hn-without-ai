@@ -194,6 +194,10 @@ export default function Home({
                           <a href={`${HN}/submit`} rel="noreferrer">
                             submit
                           </a>
+
+                          {" | "}
+
+                          <Link href="/stats">stats</Link>
                         </span>
                       </td>
 

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
+    "@supabase/supabase-js": "^2.112.0",
     "@upstash/redis": "^1.38.2",
     "@vercel/analytics": "^2.0.1",
     "linkedom": "^0.18.13",
