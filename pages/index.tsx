@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import type { GetStaticProps, InferGetStaticPropsType } from "next";
 import { getFeed, type ClassifiedStory } from "@/lib/feed";
+import { useHNUsername } from "@/lib/use-hn-username";
 
 const HN = "https://news.ycombinator.com";
 const UNSLOP_NEWS = "https://unslop.news"
@@ -106,6 +107,8 @@ export default function Home({
   updated,
   warning,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
+  const { username, karma, login, logout } = useHNUsername();
+
   return (
     <>
       <Head>
@@ -159,6 +162,15 @@ export default function Home({
                             new
                           </a>
 
+                          {username ? (
+                            <>
+                              {" | "}
+                              <a href={`${HN}/threads?id=${encodeURIComponent(username)}`} rel="noreferrer">
+                                threads
+                              </a>
+                            </>
+                          ) : null}
+
                           {" | "}
 
                           <a href={`${HN}/front`} rel="noreferrer">
@@ -199,9 +211,22 @@ export default function Home({
 
                       <td style={{ textAlign: "right", paddingRight: 4 }}>
                         <span className="pagetop">
-                          <a href={`${HN}/login`} rel="noreferrer">
-                            login
-                          </a>
+                          {username ? (
+                            <>
+                              <a href={`${HN}/user?id=${encodeURIComponent(username)}`} rel="noreferrer">
+                                {username}
+                              </a>
+                              {karma !== null ? ` (${karma})` : null}
+                              {" | "}
+                            </>
+                          ) : null}
+                          <button
+                            type="button"
+                            className="navbutton"
+                            onClick={username ? logout : login}
+                          >
+                            {username ? "logout" : "login"}
+                          </button>
                         </span>
                       </td>
 
