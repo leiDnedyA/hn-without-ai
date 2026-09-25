@@ -1,11 +1,39 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useSyncExternalStore } from "react";
 import type { GetStaticProps, InferGetStaticPropsType } from "next";
 import { getFeed, type ClassifiedStory } from "@/lib/feed";
 import { useHNUsername } from "@/lib/use-hn-username";
 
 const HN = "https://news.ycombinator.com";
 const UNSLOP_NEWS = "https://unslop.news"
+const SPONSOR_THREAD_STORAGE_KEY = "unslop.sponsor-thread-hidden";
+const SPONSOR_THREAD_CHANGE_EVENT = "unslop:sponsor-thread-change";
+
+function getShowSponsorThread(): boolean {
+  try {
+    return window.localStorage.getItem(SPONSOR_THREAD_STORAGE_KEY) !== "true";
+  } catch {
+    return true;
+  }
+}
+
+function subscribeToSponsorThread(onChange: () => void) {
+  function onStorage(event: StorageEvent) {
+    if (event.key === SPONSOR_THREAD_STORAGE_KEY || event.key === null) {
+      onChange();
+    }
+  }
+
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(SPONSOR_THREAD_CHANGE_EVENT, onChange);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(SPONSOR_THREAD_CHANGE_EVENT, onChange);
+  };
+}
+
+const getServerShowSponsorThread = () => true;
 
 type Props = {
   stories: ClassifiedStory[];
@@ -108,6 +136,20 @@ export default function Home({
   warning,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const { username, karma, login, logout } = useHNUsername();
+  const showSponsorThread = useSyncExternalStore(
+    subscribeToSponsorThread,
+    getShowSponsorThread,
+    getServerShowSponsorThread,
+  );
+
+  function dismissSponsorThread() {
+    try {
+      window.localStorage.setItem(SPONSOR_THREAD_STORAGE_KEY, "true");
+    } catch {
+      // The row is still hidden for this session if storage is unavailable.
+    }
+    window.dispatchEvent(new Event(SPONSOR_THREAD_CHANGE_EVENT));
+  }
 
   return (
     <>
@@ -247,8 +289,35 @@ export default function Home({
                   className="itemlist"
                 >
                   <tbody>
+                    {showSponsorThread ? (
+                      <>
+                        <tr className="athing sponsor-request">
+                          <td className="title rankcell">
+                            <button
+                              type="button"
+                              className="rank sponsor-dismiss"
+                              aria-label="Hide sponsor request"
+                              onClick={dismissSponsorThread}
+                            >
+                              (x)
+                            </button>
+                          </td>
+                          <td className="votelinks" />
+                          <td className="title">
+                            <span className="titleline">
+                              <a href="mailto:aydendiel@gmail.com">
+                                want to sponsor unslop.news? email me @ aydendiel@gmail.com
+                              </a>
+                            </span>
+                          </td>
+                        </tr>
+                        <tr className="spacer" style={{ height: 5 }} />
+                      </>
+                    ) : null}
                     {stories.map((story, i) => (
-                      <Row key={story.id} story={story} rank={i + 1} />
+                      <Row key={story.id} story={story} rank={i + (
+                        showSponsorThread ? 0 : 1
+                      ) + Number(showSponsorThread)} />
                     ))}
                   </tbody>
                 </table>

@@ -124,6 +124,20 @@ a:hover {
   text-align: right;
 }
 
+.sponsor-dismiss {
+  border: 0;
+  padding-left: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.sponsor-dismiss:hover {
+  text-decoration: underline;
+}
+
 .titleline a {
   color: #000000;
 }
@@ -172,6 +186,11 @@ a:hover {
 
 .subtext a:hover {
   text-decoration: underline;
+}
+
+.sponsor-request > .title {
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 /* ---------- notices and footer ---------- */
