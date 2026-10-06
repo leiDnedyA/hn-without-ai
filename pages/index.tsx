@@ -7,6 +7,7 @@ import { useHNUsername } from "@/lib/use-hn-username";
 
 const HN = "https://news.ycombinator.com";
 const UNSLOP_NEWS = "https://unslop.news"
+const SPONSOR_REQUEST_ENABLED = false;
 const SPONSOR_THREAD_STORAGE_KEY = "unslop.sponsor-thread-hidden";
 const SPONSOR_THREAD_CHANGE_EVENT = "unslop:sponsor-thread-change";
 
@@ -136,11 +137,12 @@ export default function Home({
   warning,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const { username, karma, login, logout } = useHNUsername();
-  const showSponsorThread = useSyncExternalStore(
+  const sponsorThreadPreference = useSyncExternalStore(
     subscribeToSponsorThread,
     getShowSponsorThread,
     getServerShowSponsorThread,
   );
+  const showSponsorThread = SPONSOR_REQUEST_ENABLED && sponsorThreadPreference;
 
   function dismissSponsorThread() {
     try {
